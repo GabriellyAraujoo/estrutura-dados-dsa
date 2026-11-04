@@ -5,7 +5,6 @@ on: [push, pull_request]
 jobs:
   testes:
     name: Testes no Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
 
     permissions:
       contents: read
@@ -13,7 +12,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.11", "3.12"]
+        include:
+          # O Python 3.9 saiu do Ubuntu 26.04, que e a imagem do ubuntu-latest.
+          # A 24.04 ainda tem as tres versoes, entao e ela que cobre o 3.9.
+          - python-version: "3.9"
+            os: ubuntu-24.04
+          - python-version: "3.11"
+            os: ubuntu-latest
+          - python-version: "3.12"
+            os: ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Baixar o código
